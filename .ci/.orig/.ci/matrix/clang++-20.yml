@@ -1,0 +1,33 @@
+.clang20Debug:
+  extends:
+    - .build_template
+    - .clang++20Debug
+  before_script:
+    - export CXX_STANDARD=20 CXX_COMPILER=clang++ BUILD_TYPE=Debug
+    - export BLDIR="BUILD_CLANG20Debug" CMAKE_ARGS=""
+
+.clang20RelWithDebInfo:
+  extends:
+    - .build_template
+    - .clang++20RelWithDebInfo
+  before_script:
+    - export CXX_STANDARD=20 CXX_COMPILER=clang++ BUILD_TYPE=RelWithDebInfo
+    - export BLDIR="BUILD_CLANG20RelWithDebInfo" CMAKE_ARGS=""
+
+.clang20Release:
+  extends:
+    - .build_template
+    - .clang++20Release
+  before_script:
+    - export CXX_STANDARD=20 CXX_COMPILER=clang++ BUILD_TYPE=Release
+    - export BLDIR="BUILD_CLANG20Release" CMAKE_ARGS=""
+
+clang++ 20 Debug:
+  extends: .clang20Debug
+
+clang++ 20 RelWithDebInfo:
+  extends: .clang20RelWithDebInfo
+
+clang++ 20 Release:
+  extends: .clang20Release
+

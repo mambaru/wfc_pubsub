@@ -1,0 +1,43 @@
+night upgrade:
+  stage: build
+  script:
+    - echo "Ночное обновление $CI_COMMIT_REF_NAME"
+    - git checkout "$CI_COMMIT_REF_NAME"
+    - git branch -f night-branch
+    - git pull origin "$CI_COMMIT_REF_NAME"
+    - ${SCRIPTS}/update.sh "Night Build update auto commit"
+    - ${SCRIPTS}/superchef.sh
+    - ${SCRIPTS}/upgrade.sh "auto" "master" "Night Build upgrade auto commit"
+    - count=$(git rev-list --count HEAD ^origin/wip-devel)
+    - if (( $count!=0 )); then
+    -   git checkout night-branch
+    -   git merge --squash "$CI_COMMIT_REF_NAME"
+    -   git commit --allow-empty -m "Ночная сборка $(date +%d.%m.%Y) <<push"
+    -   git push -f ${PROJECT_SSH} night-branch:night-build
+    - else
+    -   echo "Нет изменений для автоматического слияния."
+    -   echo "Удаляем бранч night-build."
+    -   git push --delete ${PROJECT_SSH} night-build || true
+    - fi
+#    - git push --delete ${PROJECT_SSH} auto-build || true
+  only:
+    - schedules
+#    - auto-build
+
+night build:
+  stage: build
+  script:
+    BUILD_SHARED=OFF make tests
+  only:
+    - night-build
+
+night merge:
+  extends: .merge request
+  script:
+    - if git push ${PROJECT_SSH} HEAD:wip-devel; then
+    -   git push --delete ${PROJECT_SSH} night-build || true
+    - else
+    -   ${SCRIPTS}/merge-request.sh wip-devel delete squash
+    - fi
+  only:
+    - night-build

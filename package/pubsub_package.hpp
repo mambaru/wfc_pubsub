@@ -8,10 +8,10 @@
 
 #include <wfc/module/package.hpp>
 
-namespace wamba{
+namespace wfc{
 
 class pubsub_package
-  : public wfc::package
+  : public ::wfc::package
 {
 public:
   pubsub_package();

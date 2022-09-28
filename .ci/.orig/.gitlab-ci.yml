@@ -1,0 +1,53 @@
+include:
+  - local: /wamba-ci.yml
+  - local: /.ci/settings.yml
+  - local: /.ci/matrix.yml
+  - local: /.ci/merge-request.yml
+  - local: /.ci/night.yml
+
+variables:
+  GIT_SUBMODULE_STRATEGY: normal
+  PROJECT_SSH: "git@gitlab.mamba.ru:${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}.git"
+  GITHUB_SSH:  "git@github.com:mambaru/${CI_PROJECT_NAME}.git"
+  SCRIPTS: "${CI_PROJECT_DIR}/external/cmake-ci/scripts"
+
+before_script:
+  - echo "RELEASE_TAG:$RELEASE_TAG"
+  - echo "RELEASE_BRANCH:$RELEASE_BRANCH"
+  - echo "PUSH_TO_GITHUB:$PUSH_TO_GITHUB"
+  - echo "MAKE_ARTIFACTS:$MAKE_ARTIFACTS"
+  - echo "BUILD_THREADS:$BUILD_THREADS"
+  - echo "PARANOID_WARNING:$PARANOID_WARNINGS"
+  - echo "FINISH_CLEANING:$FINISH_CLEANING"
+  - git submodule deinit --force .
+  - git submodule sync
+  - git submodule update --init
+
+stages:
+  - cppcheck
+  - build
+  - merge request
+  - deploy
+  - build_next
+  - github.com
+  - clean
+
+push-to-github:
+  stage: github.com
+  script:
+    - ${SCRIPTS}/github.com.sh
+  only:
+    refs:
+      - master
+    variables:
+      - $PUSH_TO_GITHUB == "ON"
+
+delete branches:
+  stage: clean
+  script:
+    - git push --delete ${PROJECT_SSH} ${CI_COMMIT_REF_NAME}
+  only:
+    - rebuild
+    - draft
+    - bugfix
+    - probe

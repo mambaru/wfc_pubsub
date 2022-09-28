@@ -1,0 +1,84 @@
+.merge request:
+  stage: merge request
+  before_script:
+    - export HOST=${CI_PROJECT_URL}
+    - export CI_PROJECT_ID=${CI_PROJECT_ID}
+    - export GITLAB_USER_ID=${GITLAB_USER_ID}
+    - export PRIVATE_TOKEN=${PRIVATE_TOKEN}
+  except:
+    - schedules
+
+wip merge:
+  extends: .merge request
+  script:
+    - ${SCRIPTS}/merge-request.sh wip-devel delete squash
+  only:
+    - /^devel.+$/
+
+devel merge:
+  extends: .merge request
+  script:
+    - "export WIP_STATUS='WIP: '"
+    - if git log -1 --pretty=%B | grep "<<push" > /dev/null; then
+    -   echo "В последнем коммите флаг '<<push' - делаем push вместо merge request'a"
+    -   if git push ${PROJECT_SSH} HEAD:refs/heads/devel; then
+    -     exit 0
+    -   else
+    -     echo "Не удалось сделать авто push, делаем merge request"
+    -   fi
+    - fi
+    - ${SCRIPTS}/merge-request.sh devel
+  only:
+    - wip-devel
+
+make pre-release:
+  stage: merge request
+  script:
+    - git branch -a
+    - git push -f ${PROJECT_SSH} HEAD:refs/heads/pre-release
+  only:
+    - devel
+
+master merge:
+  extends: .merge request
+  script:
+    - if [[ "${ALLOW_AHEAD_MASTER}" != "ON" ]]; then ${SCRIPTS}/masterchef.sh; fi
+    - if git log -1 --pretty=%B | grep "<<push" > /dev/null; then
+    -   echo "В последнем коммите флаг '<<push' - делаем push вместо merge request'a"
+    -   if git push ${PROJECT_SSH} HEAD:refs/heads/master; then
+    -     exit 0
+    -   else
+    -     echo "Не удалось сделать авто push, делаем merge request"
+    -   fi
+    - fi
+    - ${SCRIPTS}/merge-request.sh master delete
+  only:
+    - pre-release
+    - hotfix
+
+make release:
+  extends: .merge request
+  script:
+    - git tag -f -a ${RELEASE_TAG} -m "${RELEASE_BRANCH}"
+    - git push --force ${PROJECT_SSH} HEAD:refs/heads/${RELEASE_BRANCH}
+    - git push --tags --force ${PROJECT_SSH} HEAD:refs/heads/${RELEASE_BRANCH}
+  only:
+    - master
+
+update next:
+  stage: build_next
+  script:
+    - if [ -n "${NEXT_PROJECT}" ]; then
+    -   echo "Update next project':' ${NEXT_PROJECT}"
+    -   git clone git@gitlab.mamba.ru:${NEXT_PROJECT}.git _next_project_
+    -   pushd _next_project_
+    -     git checkout wip-devel
+    -     ${SCRIPTS}/update.sh "Auto update after build ${CI_PROJECT_NAME} <<push" || true
+    -     ${SCRIPTS}/upgrade.sh "auto" "master" "Auto upgrade after build ${CI_PROJECT_NAME} <<push" || true
+    -     git push git@gitlab.mamba.ru:${NEXT_PROJECT}.git wip-devel:wip-devel
+    -   popd
+    -   rm -rf _next_project_
+    - fi
+  only:
+    - master
+
