@@ -6,14 +6,18 @@
 
 #include "pubsub_build_info.h"
 #include "pubsub_package.hpp"
+#include "pubsub/pubsub_module.hpp"
+#include "comet_adapter/comet_adapter_module.hpp"
 #include <wfc/module/module_list.hpp>
 
-namespace wamba{
+namespace wfc{
 
 namespace
 {
   class impl: public wfc::module_list<
-    pubsub_build_info
+    pubsub_build_info,
+    pubsub::pubsub_module,
+    comet_adapter::comet_adapter_module
   >
   {};
 }

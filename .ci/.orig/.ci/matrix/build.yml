@@ -1,0 +1,31 @@
+###################################################################
+# TODO:                                                           #
+# Ахтунг: для сборок должна быть папка daemon                     #
+###################################################################
+
+.build_template:
+  stage: build
+  script:
+    - if [[ "${GC}" == "ON" ]]; then rm -rf "${BLDIR}"; fi
+    - export MAKE_ASSEMBLY="OFF"
+    - ./external/cmake-ci/scripts/build-and-test.sh
+    - if [[ "$GC" == "ON" ]]; then rm -rf "${BLDIR}"; fi
+  except:
+    - schedules
+
+basic:
+  extends:
+    - .build_template
+    - .basic
+  before_script:
+    - export CXX_STANDARD=${DEPLOY_STANDARD} CXX_COMPILER=${DEPLOY_COMPILER} BUILD_TYPE=${BASIC_BUILD_TYPE} PARANOID_WARNINGS="OFF"
+    - export BLDIR="BasicBuild" CMAKE_ARGS=""
+
+cppcheck:
+  stage: cppcheck
+  extends:
+    - .cppcheck
+  script:
+    - echo "Статический анализ кода ${SCRIPTS}/cppcheck-ci.sh"
+    - ${SCRIPTS}/cppcheck-ci.sh
+

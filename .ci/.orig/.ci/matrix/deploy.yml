@@ -1,0 +1,65 @@
+.deploy_template:
+  stage: deploy
+  script:
+    - if [[ "${GC}" == "ON" ]]; then rm -rf "${BLDIR}"; fi
+    - export CXX_STANDARD=${DEPLOY_STANDARD} CXX_COMPILER=${DEPLOY_COMPILER} CMAKE_ARGS=""
+    - export PARANOID_WARNINGS="OFF" DISABLE_WARNINGS="ON" BUILD_TESTING="OFF" EXTRA_WARNINGS="OFF"
+    - export CODE_COVERAGE="OFF"
+    - export ASSEMBLY_MAKE_SYML=${CI_PROJECT_DIR}
+    - ./external/cmake-ci/scripts/build-and-deploy.sh
+    - if [[ "$GC" == "ON" ]]; then rm -rf "${BLDIR}"; fi
+  except:
+    - schedules
+  artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/current_project.tar.gz
+    expire_in: 36 hours
+    
+wip:
+  extends:
+    - .deploy_template
+    - .deploy-wip
+  before_script:
+    - export BLDIR="WipBuild" BUILD_TYPE=${DEPLOY_WIP} 
+
+devel:
+  extends:
+    - .deploy_template
+    - .deploy-devel
+  before_script:
+    - export BLDIR="DevelBuild" BUILD_TYPE=${DEPLOY_DEVEL} 
+
+pre-release:
+  extends:
+    - .deploy_template
+    - .deploy-pre-release
+  before_script:
+    - export BLDIR="PreReleaseBuild" BUILD_TYPE=${DEPLOY_PRERELEASE} 
+
+release:
+  extends:
+    - .deploy_template
+    - .deploy-release
+  before_script:
+    - export BLDIR="ReleaseBuild" BUILD_TYPE=${DEPLOY_RELEASE} 
+    
+draft:
+  extends:
+    - .deploy_template
+    - .deploy-draft
+  before_script:
+    - export BLDIR="DraftBuild" BUILD_TYPE=${DEPLOY_DRAFT} 
+
+probe:
+  extends:
+    - .deploy_template
+    - .deploy-probe
+  before_script:
+    - export BLDIR="ProbeBuild" BUILD_TYPE=${DEPLOY_PROBE}
+
+hotfix:
+  extends:
+    - .deploy_template
+    - .deploy-hotfix
+  before_script:
+    - export BLDIR="HotfixBuild" BUILD_TYPE=${DEPLOY_HOTFIX} 

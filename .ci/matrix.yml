@@ -1,0 +1,99 @@
+variables:
+  # Переменные DEPLOY_* используются скриптом build-and-test.sh для создания 
+  # архива с бинарниками и конфигами в repobuild2:/monamour в время этапа сборки
+  # Если текущая конфигурация этапа сборки не совпадает, то архив не создается 
+  
+  # Стандарт c++ для сборки
+  DEPLOY_STANDARD: 17
+  # Компилятор c++ для сборки
+  DEPLOY_COMPILER: "g++"
+  # Тип сборки для бранча wip-devel
+  DEPLOY_WIP: "Debug"
+  # Тип сборки для бранча devel
+  DEPLOY_DEVEL: "RelWithDebInfo"
+  # Тип сборки для бранча pre-release
+  DEPLOY_PRERELEASE: "RelWithDebInfo"
+  # Тип сборки для бранча release
+  DEPLOY_RELEASE: "Release"
+  
+  # Тип сборки для бранча draft (срочная "дебажная" сборка )
+  DEPLOY_DRAFT: "Debug"
+  # Тип сборки для бранча probe (срочная "релизная" сборка )
+  DEPLOY_PROBE: "Release"
+  # Тип сборки для бранча hotfix
+  DEPLOY_HOTFIX: "RelWithDebInfo"
+  
+  BASIC_BUILD_TYPE: "Release"
+
+# в скобках бранчи для которых собирать
+# regexp например: /^devel-.*$/
+
+# g++
+.g++98Debug: { only: [] }
+.g++98RelWithDebInfo: { only: [] }
+.g++98Release: { only: [] }
+
+.g++11Debug: { only: [] }
+.g++11RelWithDebInfo: { only: [] }
+.g++11Release: { only: [] }
+
+.g++14Debug: { only: [] }
+.g++14RelWithDebInfo: { only: [] }
+.g++14Release: { only: [] }
+
+.g++17Debug: { only: [wip-devel, rebuild] }
+.g++17RelWithDebInfo: { only: [devel, rebuild] }
+.g++17Release: { only: [master, rebuild] }
+
+.g++20Debug: { only: [pre-release, rebuild] }
+.g++20RelWithDebInfo: { only: [] }
+.g++20Release: { only: [pre-release, rebuild] }
+
+# clang++
+.clang++98Debug: { only: [] }
+.clang++98RelWithDebInfo: { only: [] }
+.clang++98Release: { only: [] }
+
+.clang++11Debug: { only: [] }
+.clang++11RelWithDebInfo: { only: [] }
+.clang++11Release: { only: [] }
+
+.clang++14Debug: { only: [] }
+.clang++14RelWithDebInfo: { only: [] }
+.clang++14Release: { only: [] }
+
+.clang++17Debug: { only: [pre-release, rebuild] }
+.clang++17RelWithDebInfo: { only: [] }
+.clang++17Release: { only: [pre-release, rebuild] }
+
+.clang++20Debug: { only: [pre-release, rebuild] }
+.clang++20RelWithDebInfo: { only: [] }
+.clang++20Release: { only: [pre-release, rebuild] }
+
+# базовая сборка (rebuild чтобы увидеть что базовая сбока все же собирается )
+.basic: { only: [/^devel-.*$/, rebuild] }
+
+.deploy-draft: { only: [draft] }
+.deploy-probe: { only: [probe] }
+.deploy-hotfix: { only: [hotfix] }
+.deploy-wip: { only: [wip-devel] }
+.deploy-devel: { only: [devel] }
+.deploy-pre-release: { only: [pre-release] }
+.deploy-release: { only: [master] }
+
+# cppcheck
+.cppcheck: { only: [pre-release, rebuild] }
+
+include:
+  - local: /.ci/matrix/build.yml
+  - local: /.ci/matrix/g++-98.yml
+  - local: /.ci/matrix/g++-11.yml
+  - local: /.ci/matrix/g++-14.yml
+  - local: /.ci/matrix/g++-17.yml
+  - local: /.ci/matrix/g++-20.yml
+  - local: /.ci/matrix/clang++-98.yml
+  - local: /.ci/matrix/clang++-11.yml
+  - local: /.ci/matrix/clang++-14.yml
+  - local: /.ci/matrix/clang++-17.yml
+  - local: /.ci/matrix/clang++-20.yml
+  - local: /.ci/matrix/deploy.yml

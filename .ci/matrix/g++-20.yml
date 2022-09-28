@@ -1,0 +1,33 @@
+.cpp20Debug:
+  extends:
+    - .build_template
+    - .g++20Debug
+  before_script:
+    - export CXX_STANDARD=20  CXX_COMPILER=g++ BUILD_TYPE=Debug
+    - export BLDIR="BUILD_CPP20Debug" CMAKE_ARGS=""
+
+.cpp20RelWithDebInfo:
+  extends:
+    - .build_template
+    - .g++20RelWithDebInfo
+  before_script:
+    - export CXX_STANDARD=20  CXX_COMPILER=g++ BUILD_TYPE=RelWithDebInfo
+    - export BLDIR="BUILD_CPP20RelWithDebInfo" CMAKE_ARGS=""
+
+.cpp20Release:
+  extends:
+    - .build_template
+    - .g++20Release
+  before_script:
+    - export CXX_STANDARD=20 CXX_COMPILER=g++ BUILD_TYPE=Release
+    - export BLDIR="BUILD_CPP20Release" CMAKE_ARGS=""
+
+c++ 20 Debug:
+  extends: .cpp20Debug
+
+c++ 20 RelWithDebInfo:
+  extends: .cpp20RelWithDebInfo
+
+c++ 20 Release:
+  extends: .cpp20Release
+
