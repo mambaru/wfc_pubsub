@@ -25,7 +25,8 @@ pubsub_mt::pubsub_mt(const pubsub_options& opt, const rocksdb_options& ropt)
 
 void pubsub_mt::close()
 {
-  _rocksdb->close();
+  if ( _rocksdb!=nullptr )
+    _rocksdb->close();
 }
 
 void pubsub_mt::reconfigure(const pubsub_options& , const rocksdb_options& )

@@ -51,7 +51,6 @@ private:
 private:
   typedef ::rocksdb::ColumnFamilyDescriptor CFD;
   typedef std::vector<CFD> CFD_list;
-  ::rocksdb::Env* _env;
   ::rocksdb::Options _options;
   CFD_list _cdf;
   rocksdb_options _config;
