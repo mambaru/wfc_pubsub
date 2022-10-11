@@ -24,8 +24,8 @@ public:
   stored_message() = default;
 
   stored_message(const stored_message& other)
+    : _m(stored_message::copy(other.get()))
   {
-    _m = stored_message::copy(other.get());
   };
 
   stored_message(stored_message&& other)

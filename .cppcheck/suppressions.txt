@@ -1,10 +1,8 @@
-# Список подавлений ложных предупреждений cppcheck относительно корня проекта.
+unknownMacro:
+unusedFunction:
+missingInclude:
+unmatchedSuppression:
 
-# Для конкретной строки:
-# unusedFunction:./daemon/demod.cpp:1
+useStlAlgorithm:./libpubsub/pubsub/channel_map.cpp
+functionStatic:./libpubsub/pubsub/pubsub_mt.hpp:21
 
-# Для всего файла:
-# unusedFunction:./daemon/demod.cpp
-
-# Для всего проекта:
-# unusedFunction:

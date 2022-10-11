@@ -17,7 +17,7 @@ namespace {
     : public pubsub::ipubsub
   {
   public:
-    adapter_impl(std::weak_ptr<icomet_adapter> ca )
+    explicit adapter_impl(std::weak_ptr<icomet_adapter> ca )
       : _ca(ca)
     {}
 

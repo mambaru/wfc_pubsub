@@ -24,7 +24,7 @@ struct f_deathtime_less
 {
   time_t now;
 
-  f_deathtime_less(time_t now1): now(now1) {}
+  explicit f_deathtime_less(time_t now1): now(now1) {}
 
   bool operator()( const stored_message::ptr& m) const
   {
@@ -36,7 +36,7 @@ struct f_identity_equal
 {
   const message& m;
 
-  f_identity_equal(const message& m1)
+  explicit f_identity_equal(const message& m1)
     : m(m1)
   {
   }
@@ -53,7 +53,7 @@ struct f_modify_if_identity_equal
   // возможное нарушение последовательности
   bool possible_violation_of_sequence;
   int count;
-  f_modify_if_identity_equal(const message& m1)
+  explicit f_modify_if_identity_equal(const message& m1)
     : m(m1)
     , possible_violation_of_sequence(false)
     , count(0)
@@ -79,7 +79,7 @@ struct f_update_if_identity_equal
   const message& m;
   int count;
 
-  f_update_if_identity_equal( time_t now1, const message& m1 )
+  explicit f_update_if_identity_equal( time_t now1, const message& m1 )
     : now(now1)
     , m(m1)
     , count(0)
@@ -230,11 +230,11 @@ void message_queue::remove_death(time_t now)
   // Если последовательность времен жизни нарушена
   if ( !_sequenced_flag && !_queue.empty())
   {
-    size_t size = _queue.size();
+    size_t size1 = _queue.size();
     // Пробегаем по всей очереди и удаляем старые
     _queue.erase( std::remove_if(_queue.begin(), _queue.end(), fdp), _queue.end());
-    has_removed |=  (size != _queue.size());
-    _removed += size - _queue.size();
+    has_removed |=  (size1 != _queue.size());
+    _removed += size1 - _queue.size();
     if ( has_removed )
     {
       // Определяем восстановилась ли упорядоченность

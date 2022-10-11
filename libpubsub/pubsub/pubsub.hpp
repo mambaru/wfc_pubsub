@@ -26,7 +26,7 @@ public:
 
   pubsub();
 
-  void reconfigure(rocksdb_ptr db, const pubsub_options& ropt);
+  void reconfigure(rocksdb_ptr db, const pubsub_options& opt);
 
   void publish(const std::string& channel, message&& msg);
 

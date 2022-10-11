@@ -1,6 +1,7 @@
 #include "pubsub_mt.hpp"
-#include <algorithm>
+#include "logger.hpp"
 #include "rocksdb/multi_rocksdb.hpp"
+#include <algorithm>
 
 namespace wfc{ namespace pubsub{
 
@@ -31,6 +32,7 @@ void pubsub_mt::close()
 
 void pubsub_mt::reconfigure(const pubsub_options& , const rocksdb_options& )
 {
+  PUBSUB_LOG_WARNING("pubsub_mt::reconfigure NOT IMPLEMENTED!!!")
 }
 
 void pubsub_mt::get_messages(message_list_t* ml, const subscribe_params& params)
