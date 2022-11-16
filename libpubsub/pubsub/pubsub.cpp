@@ -155,11 +155,6 @@ void pubsub::reset()
 void pubsub::write_log() const
 {
   PUBSUB_LOG_MESSAGE("HANDLER MAP size=" << _handler_map.size())
-
-  /*for(auto itr = _handler_map.begin();itr != _handler_map.end(); ++itr)
-  {
-    PUBSUB_LOG_MESSAGE("HANDLER MAP:" << itr->first.first << ":" << itr->first.second)
-  }*/
 }
 
 }}
