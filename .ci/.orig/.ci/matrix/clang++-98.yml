@@ -3,7 +3,7 @@
     - .build_template
     - .clang++98Debug
   before_script:
-    - export CXX_STANDARD=98 CXX_COMPILER=clang++ BUILD_TYPE=Debug
+    - export CXX_STANDARD=98 CXX_COMPILER=clang++ BUILD_TYPE=Debug CODE_COVERAGE=OFF
     - export BLDIR="BUILD_CLANG98Debug" CMAKE_ARGS=""
 
 .clang98RelWithDebInfo:
@@ -11,7 +11,7 @@
     - .build_template
     - .clang++98RelWithDebInfo
   before_script:
-    - export CXX_STANDARD=98  CXX_COMPILER=clang++ BUILD_TYPE=RelWithDebInfo
+    - export CXX_STANDARD=98  CXX_COMPILER=clang++ BUILD_TYPE=RelWithDebInfo CODE_COVERAGE=OFF
     - export BLDIR="BUILD_CLANG98RelWithDebInfo" CMAKE_ARGS=""
 
 .clang98Release:
@@ -19,7 +19,7 @@
     - .build_template
     - .clang++98Release
   before_script:
-    - export CXX_STANDARD=98  CXX_COMPILER=clang++ BUILD_TYPE=Release
+    - export CXX_STANDARD=98  CXX_COMPILER=clang++ BUILD_TYPE=Release CODE_COVERAGE=OFF
     - export BLDIR="BUILD_CLANG98Release" CMAKE_ARGS=""
 
 clang++ 98 Debug:

@@ -140,7 +140,6 @@ void comet_adapter_domain::describe( request::describe::ptr req, response::descr
   if ( this->bad_request(req, cb) )
     return;
 
-  std::lock_guard<mutex_type> lk(_mutex);
   if ( auto pb = _target.lock() )
   {
     auto req2 = std::make_unique<pubsub::request::describe>();
@@ -164,18 +163,19 @@ void comet_adapter_domain::subscribe( request::subscribe::ptr req, response::sub
     return;
 
 
-  std::lock_guard<mutex_type> lk(_mutex);
-
   std::shared_ptr<pubsub::ipubsub> padapt;
-  auto itr = _adapter_map.find(io_id);
-  if ( itr == _adapter_map.end() )
   {
-    padapt = std::make_shared<adapter_impl>(wcomet_adapter);
-    _adapter_map[io_id] = padapt;
-  }
-  else
-  {
-    padapt = itr->second;
+    std::lock_guard<mutex_type> lk(_mutex);
+    auto itr = _adapter_map.find(io_id);
+    if ( itr == _adapter_map.end() )
+    {
+      padapt = std::make_shared<adapter_impl>(wcomet_adapter);
+      _adapter_map[io_id] = padapt;
+    }
+    else
+    {
+      padapt = itr->second;
+    }
   }
 
   if ( auto pb = _target.lock() )

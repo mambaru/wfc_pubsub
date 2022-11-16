@@ -3,7 +3,7 @@
     - .build_template
     - .clang++14Debug
   before_script:
-    - export CXX_STANDARD=14 CXX_COMPILER=clang++ BUILD_TYPE=Debug
+    - export CXX_STANDARD=14 CXX_COMPILER=clang++ BUILD_TYPE=Debug CODE_COVERAGE=OFF
     - export BLDIR="BUILD_CLANG14Debug" CMAKE_ARGS=""
 
 .clang14RelWithDebInfo:
@@ -11,7 +11,7 @@
     - .build_template
     - .clang++14RelWithDebInfo
   before_script:
-    - export CXX_STANDARD=14 CXX_COMPILER=clang++ BUILD_TYPE=RelWithDebInfo
+    - export CXX_STANDARD=14 CXX_COMPILER=clang++ BUILD_TYPE=RelWithDebInfo CODE_COVERAGE=OFF
     - export BLDIR="BUILD_CLANG14RelWithDebInfo" CMAKE_ARGS=""
 
 .clang14Release:
@@ -19,7 +19,7 @@
     - .build_template
     - .clang++14Release
   before_script:
-    - export CXX_STANDARD=14 CXX_COMPILER=clang++ BUILD_TYPE=Release
+    - export CXX_STANDARD=14 CXX_COMPILER=clang++ BUILD_TYPE=Release CODE_COVERAGE=OFF
     - export BLDIR="BUILD_CLANG14Release" CMAKE_ARGS=""
 
 clang++ 14 Debug:

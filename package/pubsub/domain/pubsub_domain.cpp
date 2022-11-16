@@ -18,14 +18,23 @@ pubsub_domain::pubsub_domain()
 
 void pubsub_domain::configure()
 {
-  _debug_reset = this->options().debug_reset;
-  _pubsub = std::make_shared<pubsub_mt>( this->options(), this->options());
+  pubsub_config opt = this->options();
+  _debug_reset = opt.debug_reset;
+  opt.ini = this->global()->find_config(opt.ini);
+  if ( opt.ini.empty() )
+  {
+    SYSTEM_LOG_FATAL("Не найден ini файл для rocksdb:'" << this->options().ini << "'")
+    return;
+  }
+  _pubsub = std::make_shared<pubsub_mt>(opt, opt);
 }
 
 void pubsub_domain::reconfigure()
 {
+
   _debug_reset = this->options().debug_reset;
-  _pubsub->reconfigure(this->options(), this->options());
+  if ( _pubsub!=nullptr )
+    _pubsub->reconfigure(this->options(), this->options());
 }
 
 

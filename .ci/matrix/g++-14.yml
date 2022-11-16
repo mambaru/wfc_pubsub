@@ -11,7 +11,7 @@
     - .build_template
     - .g++14RelWithDebInfo
   before_script:
-    - export CXX_STANDARD=14  CXX_COMPILER=g++ BUILD_TYPE=RelWithDebInfo
+    - export CXX_STANDARD=14  CXX_COMPILER=g++ BUILD_TYPE=RelWithDebInfo CODE_COVERAGE=OFF
     - export BLDIR="BUILD_CPP14RelWithDebInfo" CMAKE_ARGS=""
 
 .cpp14Release:
@@ -19,7 +19,7 @@
     - .build_template
     - .g++14Release
   before_script:
-    - export CXX_STANDARD=14 CXX_COMPILER=g++ BUILD_TYPE=Release
+    - export CXX_STANDARD=14 CXX_COMPILER=g++ BUILD_TYPE=Release CODE_COVERAGE=OFF
     - export BLDIR="BUILD_CPP14Release" CMAKE_ARGS=""
 
 c++ 14 Debug:
