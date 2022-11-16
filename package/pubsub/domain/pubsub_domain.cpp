@@ -31,7 +31,6 @@ void pubsub_domain::configure()
 
 void pubsub_domain::reconfigure()
 {
-
   _debug_reset = this->options().debug_reset;
   if ( _pubsub!=nullptr )
     _pubsub->reconfigure(this->options(), this->options());
@@ -69,7 +68,8 @@ void pubsub_domain::start()
 
 void pubsub_domain::stop()
 {
-  _pubsub->close();
+  if ( _pubsub != nullptr )
+    _pubsub->close();
 }
 
 
@@ -80,9 +80,11 @@ void pubsub_domain::publish( request::publish::ptr req, response::publish::callb
 
   auto res = this->create_response(cb);
 
-  for (request::publish::topic& msg : req->messages)
-    _pubsub->publish(msg.channel, std::move(static_cast<message&>(msg)) );
-
+  if ( auto ps = _pubsub )
+  {
+    for (request::publish::topic& msg : req->messages)
+      ps->publish(msg.channel, std::move(static_cast<message&>(msg)) );
+  }
   this->send_response( std::move(res), std::move(cb) );
 }
 
@@ -93,17 +95,20 @@ void pubsub_domain::get_messages(request::get_messages::ptr req, response::get_m
 
   auto res = this->create_response(cb);
 
-  for ( subscribe_params params : req->channels )
+  if ( auto ps = _pubsub )
   {
-    pubsub_mt::message_list_t ml;
-    _pubsub->get_messages(&ml, params);
-
-    for ( auto& m : ml )
+    for ( subscribe_params params : req->channels )
     {
-      request::publish::topic tpk;
-      tpk.channel = params.channel; // move(?)
-      static_cast<message&>(tpk) = std::move(m);
-      res->messages.emplace_back( std::move(tpk) );
+      pubsub_mt::message_list_t ml;
+      ps->get_messages(&ml, params);
+
+      for ( auto& m : ml )
+      {
+        request::publish::topic tpk;
+        tpk.channel = params.channel; // move(?)
+        static_cast<message&>(tpk) = std::move(m);
+        res->messages.emplace_back( std::move(tpk) );
+      }
     }
   }
   cb( std::move(res) );
@@ -112,7 +117,8 @@ void pubsub_domain::get_messages(request::get_messages::ptr req, response::get_m
 
 void pubsub_domain::unreg_io(io_id_t io_id)
 {
-  _pubsub->describe(io_id);
+  if (_pubsub!=nullptr)
+    _pubsub->describe(io_id);
 }
 
 void pubsub_domain::subscribe( request::subscribe::ptr req, response::subscribe::callback cb,
@@ -139,15 +145,18 @@ void pubsub_domain::subscribe( request::subscribe::ptr req, response::subscribe:
       }
     };
 
-    _pubsub->subscribe(&ml, io_id, params);
-    if ( res!=nullptr )
+    if ( auto ps = _pubsub )
     {
-      for ( auto& m : ml )
+      ps->subscribe(&ml, io_id, params);
+      if ( res!=nullptr )
       {
-        request::publish::topic tpk;
-        tpk.channel = params.channel; // move(?)
-        static_cast<message&>(tpk) = std::move(m);
-        res->messages.emplace_back( std::move(tpk) );
+        for ( auto& m : ml )
+        {
+          request::publish::topic tpk;
+          tpk.channel = params.channel; // move(?)
+          static_cast<message&>(tpk) = std::move(m);
+          res->messages.emplace_back( std::move(tpk) );
+        }
       }
     }
   }
@@ -164,9 +173,12 @@ void pubsub_domain::describe( request::describe::ptr req, response::describe::ca
 
   auto res = this->create_response(cb);
 
-  for (const std::string& channel: req->channels )
+  if ( auto ps = _pubsub )
   {
-    _pubsub->describe(io_id, channel);
+    for (const std::string& channel: req->channels )
+    {
+      ps->describe(io_id, channel);
+    }
   }
 
   if ( res != nullptr )

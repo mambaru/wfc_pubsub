@@ -133,7 +133,7 @@ UNIT(pubsub2, "")
   );
 
 
-  t << equal<expect, size_t>(subscribe_count, 2) << FAS_FL;
+  t << equal<expect, size_t>(subscribe_count, 1) << FAS_FL;
   t << equal<expect, size_t>(publish_count, 1) << FAS_FL;
 
   ptest->stop();
