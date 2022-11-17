@@ -16,6 +16,7 @@ struct pubsub_config
   : pubsub_options
   , rocksdb_options
 {
+  time_t control_s = 60;
   bool debug_reset = false;
 };
 
