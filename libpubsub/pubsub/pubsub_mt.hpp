@@ -51,7 +51,7 @@ public:
 private:
   size_t index_( const std::string& channel ) const;
 private:
-  typedef std::mutex mutex_type;
+  typedef std::recursive_mutex mutex_type;
   size_t _size = 0;
   mutable std::vector<mutex_type> _mutext_list;
   std::vector<pubsub> _pubsub_list;
