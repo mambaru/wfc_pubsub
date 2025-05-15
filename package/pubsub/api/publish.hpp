@@ -8,20 +8,14 @@
 
 #include <memory>
 #include <functional>
-#include <pubsub/api/message.hpp>
+#include <message_queue/topic.hpp>
 namespace wfc{ namespace pubsub{
 
 namespace request{
 
   struct publish
   {
-    struct topic:message
-    {
-      std::string channel;
-    };
-    typedef std::vector<topic> message_list_t;
-
-    message_list_t messages;
+    topic::topic_list_t messages;
     typedef std::unique_ptr<publish> ptr;
   };
 }

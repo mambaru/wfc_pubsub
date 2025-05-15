@@ -11,7 +11,6 @@ class multi_rocksdb;
 class pubsub_mt
 {
   typedef std::shared_ptr<multi_rocksdb> rocksdb_ptr;
-
 public:
 
   typedef pubsub::message_list_t message_list_t;
@@ -42,11 +41,9 @@ public:
    */
   size_t size(size_t* count) const;
 
-  size_t get_removed(bool reset) const;
+  size_t removed_count(bool reset) const;
   size_t empty_count() const;
   void write_log() const;
-
-
   void reset();
 private:
   size_t index_( const std::string& channel ) const;

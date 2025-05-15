@@ -1,7 +1,8 @@
 #include <fas/testing.hpp>
-#include <pubsub/api/message.hpp>
-#include <pubsub/stored_message.hpp>
-#include <pubsub/message_queue.hpp>
+#include <message_queue/message.hpp>
+#include <message_queue/message_queue.hpp>
+#include <message_queue/channel_map.hpp>
+#include <message_queue/stored_message.hpp>
 
 namespace{
   UNIT(message, "")
@@ -41,10 +42,58 @@ namespace{
     }
     t << nothing;
   }
+
+  UNIT(channel_map, "")
+  {
+    using namespace fas::testing;
+    using namespace wfc;
+
+    pubsub::channel_map cm;
+
+    pubsub::message m;
+    m.limit = 10;
+    m.lifetime = 10;
+    m.birthtime = time(nullptr);
+
+    m.identity="id1.1";
+    cm.push("ch1", m);
+    m.identity="id1.2";
+    cm.push("ch1", m);
+    m.identity="id1.3";
+    cm.push("ch1", m);
+
+    m.identity="id2.1";
+    cm.push("ch2", m);
+    m.identity="id2.2";
+    cm.push("ch2", m);
+    m.identity="id2.3";
+    cm.push("ch2", m);
+
+    size_t s1 = 0, s2 = 0;
+    s1 = cm.size(&s2);
+    t << equal<expect, size_t>(s1, 2 ) << FAS_FL;
+    t << equal<expect, size_t>(s2, 6 ) << FAS_FL;
+
+
+    pubsub::channel_map::topic_list_t tl;
+    size_t count = cm.takeaway(4, &tl);
+    t << equal<expect, size_t>(count, 4 ) << FAS_FL;
+    t << equal<expect, size_t>(tl.size(), 4 ) << FAS_FL;
+    tl.clear();
+    count = cm.takeaway(4, &tl);
+    t << equal<expect, size_t>(count, 2 ) << FAS_FL;
+    t << equal<expect, size_t>(tl.size(), 2 ) << FAS_FL;
+
+    s2 = 0;
+    s1 = cm.size(&s2);
+    t << equal<expect, size_t>(s1, 2 ) << FAS_FL;
+    t << equal<expect, size_t>(s2, 0 ) << FAS_FL;
+  }
+
 }
 
 BEGIN_SUITE(message_suite, "")
   ADD_UNIT(message)
   ADD_UNIT(message_queue)
-
+  ADD_UNIT(channel_map)
 END_SUITE(message_suite)

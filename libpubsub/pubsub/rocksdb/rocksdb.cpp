@@ -4,11 +4,11 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 
-#include "rocksdb.hpp"
-#include "../api/message_json.hpp"
-#include <pubsub/logger.hpp>
 #include <rocksdb/db.h>
-#include "../message_queue.hpp"
+#include "rocksdb.hpp"
+#include "../logger.hpp"
+#include "message_queue/message_queue.hpp"
+#include "message_queue/message_json.hpp"
 
 namespace wfc{ namespace pubsub{
 

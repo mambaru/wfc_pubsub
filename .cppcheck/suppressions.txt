@@ -4,5 +4,7 @@ missingInclude:
 unmatchedSuppression:
 
 useStlAlgorithm:./libpubsub/pubsub/channel_map.cpp
-functionStatic:./libpubsub/pubsub/pubsub_mt.hpp:21
-
+useStlAlgorithm:./tests/where_memory3.cpp
+functionStatic:./libpubsub/pubsub/pubsub_mt.hpp
+functionStatic:./libpubsub/pubsub/pubsub.hpp
+useStlAlgorithm:./libpubsub/message_queue/channel_map.cpp

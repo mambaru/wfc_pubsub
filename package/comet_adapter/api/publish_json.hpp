@@ -1,7 +1,7 @@
 #pragma once
 
 #include <comet_adapter/api/publish.hpp>
-#include <pubsub/api/message_json.hpp>
+#include <message_queue/message_json.hpp>
 #include <comet_adapter/api/status_json.hpp>
 #include <wjson/wjson.hpp>
 

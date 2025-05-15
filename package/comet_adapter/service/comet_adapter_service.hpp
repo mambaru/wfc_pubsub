@@ -72,7 +72,7 @@ struct service_method_list: wfc::jsonrpc::method_list
     _subscribe_,
     request::subscribe_json,
     response::subscribe_json,
-    icomet_adapter,
+    icomet_adapter, icomet_adapter,
     &icomet_adapter::subscribe
   >,
   wfc::jsonrpc::dual_method3<_describe_, request::describe_json, response::describe_json, icomet_adapter, &icomet_adapter::describe>

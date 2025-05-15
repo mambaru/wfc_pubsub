@@ -8,14 +8,13 @@
 
 #include <pubsub/rocksdb/rocksdb_options.hpp>
 #include <pubsub/rocksdb/rocksdb_env.hpp>
-#include <pubsub/api/message.hpp>
-#include <vector>
-#include <string>
-#include <ctime>
-
 #include <rocksdb/db.h>
 #include <rocksdb/write_batch.h>
 #include <rocksdb/utilities/db_ttl.h>
+#include <message_queue/message.hpp>
+#include <vector>
+#include <string>
+#include <ctime>
 
 namespace wfc{ namespace pubsub{
 
@@ -30,7 +29,7 @@ public:
   virtual ~rocksdb();
   bool create(time_t ttl, const rocksdb_options& opt, const rocksdb_env& env);
   bool close();
-  bool push( const std::string& channel, const message& m );
+  bool push( const std::string& name, const message& m );
   bool get_messages( message_list_t* ml, const std::string& name, cursor_t cursor, size_t limit);
 
 private:

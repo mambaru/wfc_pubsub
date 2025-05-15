@@ -1,10 +1,10 @@
 #include "merge_operator.hpp"
 #include <pubsub/logger.hpp>
+#include <message_queue/message.hpp>
+#include <message_queue/message_json.hpp>
+#include <message_queue/message_queue.hpp>
 #include <wjson/wjson.hpp>
 #include <algorithm>
-#include "../api/message.hpp"
-#include "../api/message_json.hpp"
-#include "../message_queue.hpp"
 
 namespace wfc{ namespace pubsub{
 

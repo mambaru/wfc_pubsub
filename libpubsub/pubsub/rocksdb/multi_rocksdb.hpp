@@ -8,7 +8,7 @@
 
 #include <pubsub/rocksdb/rocksdb_options.hpp>
 #include <pubsub/rocksdb/rocksdb_factory.hpp>
-#include <pubsub/api/message.hpp>
+#include <message_queue/message.hpp>
 #include <memory>
 #include <vector>
 #include <string>
@@ -41,7 +41,7 @@ private:
   rocksdb_ptr get_db_(time_t ttl) const;
   void close_db_(time_t ttl) ;
 private:
-  typedef std::mutex mutex_type;
+  typedef std::recursive_mutex mutex_type;
   mutable mutex_type _mutex;
   rocksdb_map _rocksdb_map;
   channel_set _channels;

@@ -14,14 +14,14 @@ namespace wfc{ namespace comet_adapter{
 
 namespace {
   class adapter_impl
-    : public pubsub::ipubsub
+    : public pubsub::isubscriber
   {
   public:
     explicit adapter_impl(std::weak_ptr<icomet_adapter> ca ) noexcept
       : _ca(ca)
     {}
 
-    virtual void publish( pubsub::request::publish::ptr req, pubsub::response::publish::callback cb ) override
+    virtual void notify( pubsub::request::publish::ptr req, pubsub::response::publish::callback cb ) override
     {
       if ( auto pca = _ca.lock() )
       {
@@ -39,8 +39,9 @@ namespace {
       }
     }
 
+      /*
     virtual void subscribe( pubsub::request::subscribe::ptr, pubsub::response::subscribe::callback,
-                          io_id_t, std::weak_ptr<ipubsub> ) override
+                          io_id_t, std::weak_ptr<pubsub::isubscriber> ) override
     {
       abort();
     }
@@ -54,7 +55,7 @@ namespace {
     {
       abort();
     }
-
+      */
   private:
     std::weak_ptr<icomet_adapter> _ca;
   };
@@ -95,7 +96,7 @@ void comet_adapter_domain::publish( request::publish::ptr req, response::publish
   if ( auto pb = _target.lock() )
   {
     auto req2 = std::make_unique< pubsub::request::publish >();
-    pubsub::request::publish::topic tp;
+    pubsub::topic tp;
     tp.channel = std::move(req->channel);
     static_cast<pubsub::message&>(tp) = std::move( *req );
     req2->messages.push_back( std::move(tp) );
@@ -163,7 +164,7 @@ void comet_adapter_domain::subscribe( request::subscribe::ptr req, response::sub
     return;
 
 
-  std::shared_ptr<pubsub::ipubsub> padapt;
+  std::shared_ptr<pubsub::isubscriber> padapt;
   {
     std::lock_guard<mutex_type> lk(_mutex);
     auto itr = _adapter_map.find(io_id);

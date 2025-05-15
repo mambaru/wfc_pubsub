@@ -35,10 +35,10 @@ public:
 
 private:
   typedef std::weak_ptr<pubsub::ipubsub> wpubsub_ptr;
-  typedef std::shared_ptr<pubsub::ipubsub> pubsub_ptr;
+  typedef std::shared_ptr<pubsub::isubscriber> subscriber_ptr;
   wpubsub_ptr _target;
-  typedef std::mutex mutex_type;
-  std::map<io_id_t, pubsub_ptr> _adapter_map;
+  typedef std::recursive_mutex mutex_type;
+  std::map<io_id_t, subscriber_ptr> _adapter_map;
   mutable mutex_type _mutex;
 };
 

@@ -7,7 +7,7 @@
 #pragma once
 
 #include <pubsub/api/publish.hpp>
-#include <pubsub/api/subscribe_params.hpp>
+#include <message_queue/subscribe_params.hpp>
 
 #include <functional>
 #include <vector>
@@ -19,7 +19,8 @@ namespace request{
 
   struct get_messages
   {
-    std::vector<subscribe_params> channels;
+    typedef subscribe_params::params_list_t params_list_t;
+    params_list_t channels;
     typedef std::unique_ptr<get_messages> ptr;
   };
 }
@@ -28,7 +29,7 @@ namespace response{
 
   struct get_messages
   {
-    request::publish::message_list_t messages;
+    topic::topic_list_t messages;
     typedef std::unique_ptr<get_messages> ptr;
     typedef std::function<void(ptr)> callback;
   };

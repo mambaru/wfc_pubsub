@@ -41,7 +41,7 @@ macro(get_rocksdb)
   find_package(rocksdb)
   message(STATUS "Find RocksDB=${ROCKSDB_FOUND}" )
   if ( NOT ROCKSDB_FOUND )
-    wci_third_party(NAME rocksdb BRANCH v7.4.3 PARAMS
+    wci_third_party(NAME rocksdb BRANCH v10.2.1-myfix PARAMS
       "-DUSE_RTTI=ON -DWITH_SNAPPY=ON -DWITH_TESTS=OFF -DWITH_TOOLS=OFF \
        -DWITH_BENCHMARK_TOOLS=OFF -DWITH_GFLAGS=OFF -DBUILD_SHARED_LIBS=OFF")
     find_package(rocksdb REQUIRED)

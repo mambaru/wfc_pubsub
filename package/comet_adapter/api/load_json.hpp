@@ -4,8 +4,8 @@
 
 #include <comet_adapter/api/load.hpp>
 #include <comet_adapter/api/status_json.hpp>
-#include <pubsub/api/subscribe_params_json.hpp>
-#include <pubsub/api/message_json.hpp>
+#include <message_queue/subscribe_params_json.hpp>
+#include <message_queue/message_json.hpp>
 #include <wjson/json.hpp>
 
 namespace wfc{ namespace comet_adapter{

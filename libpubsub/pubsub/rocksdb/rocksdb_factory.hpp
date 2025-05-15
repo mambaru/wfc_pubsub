@@ -21,7 +21,7 @@ public:
   bool configure(const rocksdb_options& opt);
   rocksdb_ptr create(time_t ttl) const;
 private:
-  typedef std::mutex mutex_type;
+  typedef std::recursive_mutex mutex_type;
   mutable mutex_type _mutex;
   rocksdb_options _opt;
   rocksdb_env _env;

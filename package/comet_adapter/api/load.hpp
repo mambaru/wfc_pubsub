@@ -8,8 +8,8 @@
 #pragma once
 
 #include <comet_adapter/api/status.hpp>
-#include <pubsub/api/subscribe_params.hpp>
-#include <pubsub/api/message.hpp>
+#include <message_queue/subscribe_params.hpp>
+#include <message_queue/message.hpp>
 #include <functional>
 #include <memory>
 
