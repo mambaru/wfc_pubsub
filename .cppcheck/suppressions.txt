@@ -1,8 +1,0 @@
-unknownMacro:
-unusedFunction:
-missingInclude:
-unmatchedSuppression:
-useStlAlgorithm:
-
-functionStatic:./libpubsub/pubsub/pubsub_mt.hpp
-functionStatic:./libpubsub/pubsub/pubsub.hpp
