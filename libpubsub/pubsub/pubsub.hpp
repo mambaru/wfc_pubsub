@@ -1,9 +1,9 @@
 #pragma once
 
-#include <pubsub/channel_map.hpp>
+#include <message_queue/channel_map.hpp>
 #include <pubsub/pubsub_options.hpp>
-#include <pubsub/api/types.hpp>
-#include <pubsub/api/subscribe_params.hpp>
+#include <message_queue/types.hpp>
+#include <message_queue/subscribe_params.hpp>
 #include <functional>
 #include <atomic>
 #include <mutex>
@@ -23,12 +23,14 @@ public:
 
   typedef channel_map::message_list_t message_list_t;
   typedef std::function<void(const std::string& channel, const message& msg)> handler_fun_t;
+  typedef std::shared_ptr<handler_fun_t> handler_fun_ptr;
+  typedef std::function<void()> fire_fun_t;
 
   pubsub();
 
   void reconfigure(rocksdb_ptr db, const pubsub_options& opt);
 
-  void publish(const std::string& channel, message&& msg);
+  fire_fun_t publish(const std::string& channel, message&& msg);
 
   void get_messages(message_list_t* ml, const subscribe_params& params);
 
@@ -44,7 +46,7 @@ public:
 
   size_t size(size_t* count) const;
 
-  size_t get_removed(bool reset) const;
+  size_t removed_count(bool reset) const;
 
   size_t empty_count() const;
 
@@ -56,12 +58,12 @@ private:
 
   bool subscribe_(subscriber_id_t id, const std::string& channel, const handler_fun_t& handler);
   bool describe_(subscriber_id_t id, const std::string& channel);
-  void fire_(const std::string& channel, const message& msg) const;
+  fire_fun_t fire_(const std::string& channel, const message& msg) const;
 
 private:
   typedef std::pair<subscriber_id_t, std::string> subscriber_channel_t;
   typedef std::pair<std::string, subscriber_id_t> channel_subscriber_t;
-  typedef std::map<channel_subscriber_t, handler_fun_t> handler_map_t;
+  typedef std::map<channel_subscriber_t, handler_fun_ptr> handler_map_t;
   typedef std::set<subscriber_channel_t> subscriber_set_t;
 
   static std::atomic<subscriber_id_t> _id_counter;

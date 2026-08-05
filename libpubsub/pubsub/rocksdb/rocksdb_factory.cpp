@@ -49,7 +49,7 @@ bool rocksdb_factory::configure(const rocksdb_options& opt)
 
   if ( !_opt.ini.empty() )
   {
-    auto status = ::rocksdb::LoadOptionsFromFile( _opt.ini, _env.env, &(_env.options), &(_env.cdf) );
+    auto status = ::rocksdb::LoadOptionsFromFile( ::rocksdb::ConfigOptions(), _opt.ini, &(_env.options), &(_env.cdf) );
     if ( !status.ok() )
     {
       PUBSUB_LOG_FATAL("rocksdb_factory::initialize: " << status.ToString());
@@ -58,10 +58,13 @@ bool rocksdb_factory::configure(const rocksdb_options& opt)
   }
   else
   {
+    _env.cdf.clear();
     _env.cdf.push_back( rocksdb_env::CFD() );
     _env.options = ::rocksdb::Options();
   }
 
+  _env.options.create_if_missing = true;
+  _env.options.env = _env.env;
   _env.cdf[0].options.merge_operator = std::make_shared<merge_operator>();
 
   return true;
@@ -74,7 +77,8 @@ rocksdb_factory::rocksdb_ptr rocksdb_factory::create(time_t ttl) const
   std::lock_guard<mutex_type> lk(_mutex);
   if ( db->create(ttl, _opt, _env) )
     return db;
-  return nullptr;
+  db.reset();
+  return db;
 }
 
 }}

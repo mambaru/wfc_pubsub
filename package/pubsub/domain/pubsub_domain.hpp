@@ -18,6 +18,7 @@ class pubsub_domain
   : public wfc::domain_object<ipubsub, pubsub_config>
   , public std::enable_shared_from_this<pubsub_domain>
 {
+  typedef wfc::domain_object<ipubsub, pubsub_config> super;
 public:
   pubsub_domain();
   virtual void unreg_io(io_id_t io_id) override;
@@ -29,11 +30,19 @@ public:
   virtual void get_messages(request::get_messages::ptr req, response::get_messages::callback cb ) override;
 
   virtual void subscribe( request::subscribe::ptr req, response::subscribe::callback cb,
-                          io_id_t io_id, std::weak_ptr<ipubsub> ) override;
+                          io_id_t io_id, std::weak_ptr<isubscriber> ) override;
   virtual void describe( request::describe::ptr req, response::describe::callback cb, io_id_t io_id) override;
+
+  virtual void ping( request::ping::ptr req, response::ping::callback cb, io_id_t io_id) override;
+
 private:
   std::shared_ptr<pubsub_mt> _pubsub;
   std::atomic_bool _debug_reset;
+  // TODO: таймер для удаления вызова remove_death и удаления тухлых каналов
+
+  typedef std::mutex mutex_type;
+  mutex_type _mutex;
+  std::map<io_id_t, std::string> _ping_map;
 };
 
 }}

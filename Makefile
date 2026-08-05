@@ -15,21 +15,29 @@ help:
 	@echo "	make clean"
 	@echo "	make update"
 	@echo "	make upgrade"
+	@echo "	make install"
+	@echo "	make docker-build"
+	@echo "	make docker-run"
+	@echo "	make docker-rm"
 	@echo "Example:"
 	@echo "	make static "
 	@echo "	make shared VERBOSE=1 ARGS=-j5"
 	@echo "	BUILD_SHARED_LIBS=ON make tests"
+	@echo "	make install ARGS=\"--prefix ./build/test-install\""
 
 CMAKE ?= cmake
+PRJ = `basename ${PWD}`
 
 doc:
 	rm -rf docs
 	if hash doxygen 2>/dev/null; then doxygen; fi
 runup:
-	mkdir -p build
+	mkdir -p build || exit 1
 	rm -rf ./build/CMakeCache.txt
-	if [ ! -d external/cmake-ci/cmake ]; then git submodule update --init external/cmake-ci; fi
-
+	@if [ ! -d external/cmake-ci/cmake ]; then \
+		git submodule update --init external/cmake-ci || exit 1; \
+		git submodule update --init configurations 2>/dev/null || true; \
+	fi
 init: runup
 	${CMAKE} -B ./build
 	./external/cmake-ci/scripts/after_make.sh
@@ -82,3 +90,11 @@ update: runup
 	./external/cmake-ci/scripts/update.sh
 upgrade: update
 	./external/cmake-ci/scripts/upgrade.sh
+install: runup
+	${CMAKE} --install ./build ${ARGS}
+docker-build:
+	docker build -t ${PRJ} -f Dockerfile.build .
+docker-run:
+	docker run --rm -it ${PRJ}
+docker-rm:
+	docker rmi ${PRJ}

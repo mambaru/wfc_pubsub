@@ -45,8 +45,12 @@ void pubsub_mt::get_messages(message_list_t* ml, const subscribe_params& params)
 void pubsub_mt::publish(const std::string& channel, message&& msg)
 {
   size_t index = index_(channel);
-  std::lock_guard<mutex_type> lk(_mutext_list[index]);
-  _pubsub_list[index].publish(channel, std::move(msg));
+  pubsub::fire_fun_t fire;
+  {
+    std::lock_guard<mutex_type> lk(_mutext_list[index]);
+    fire = _pubsub_list[index].publish(channel, std::move(msg));
+  }
+  fire();
 }
 
 subscriber_id_t pubsub_mt::subscribe(message_list_t* ml, const subscribe_params& params)
@@ -122,13 +126,13 @@ size_t pubsub_mt::size(size_t* count) const
   return s;
 }
 
-size_t pubsub_mt::get_removed(bool reset) const
+size_t pubsub_mt::removed_count(bool reset) const
 {
   size_t s = 0;
   for (size_t i = 0 ; i < _size; ++i)
   {
     std::lock_guard<mutex_type> lk(_mutext_list[i]);
-    s += _pubsub_list[i].get_removed(reset);
+    s += _pubsub_list[i].removed_count(reset);
   }
   return s;
 }

@@ -2,7 +2,7 @@ unknownMacro:
 unusedFunction:
 missingInclude:
 unmatchedSuppression:
+useStlAlgorithm:
 
-useStlAlgorithm:./libpubsub/pubsub/channel_map.cpp
-functionStatic:./libpubsub/pubsub/pubsub_mt.hpp:21
-
+functionStatic:./libpubsub/pubsub/pubsub_mt.hpp
+functionStatic:./libpubsub/pubsub/pubsub.hpp

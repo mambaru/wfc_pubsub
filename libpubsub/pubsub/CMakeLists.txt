@@ -1,7 +1,5 @@
 add_library(
   pubsub
-    message_queue.cpp
-    channel_map.cpp
     pubsub.cpp
     pubsub_mt.cpp
     rocksdb/rocksdb.cpp
@@ -10,9 +8,19 @@ add_library(
     rocksdb/merge_operator.cpp
 )
 
-wci_targets(pubsub)
-get_boost(filesystem)
+update_ogenc(
+  TARGETS pubsub
+  WARNINGS -Wuseless-cast -Wctor-dtor-privacy -Wzero-as-null-pointer-constant -Wold-style-cast -Wnrvo -Wcast-align -Wredundant-decls -Warith-conversion
+  OFF)
 
-add_dependencies(pubsub rocksdb )
-target_include_directories(pubsub PUBLIC ${libpubsub_SOURCE_DIR})
-target_link_libraries(pubsub PUBLIC rocksdb PRIVATE wlog faslib ${SNAPPY_LIBRARIES} Boost::filesystem)
+update_ogenc(
+  TARGETS pubsub
+  WARNINGS -Wno-cast-align
+  ON)
+
+wci_targets(pubsub)
+get_boost(filesystem atomic)
+
+add_dependencies(pubsub rocksdb message_queue)
+target_include_directories(pubsub PUBLIC "$<BUILD_INTERFACE:${libpubsub_SOURCE_DIR}>")
+target_link_libraries(pubsub PRIVATE Boost::filesystem Boost::atomic rocksdb message_queue PRIVATE wlog faslib  ${SNAPPY_LIBRARIES} )

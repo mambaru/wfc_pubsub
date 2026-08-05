@@ -8,6 +8,7 @@
 #include "pubsub_module.hpp"
 #include "domain/pubsub_multiton.hpp"
 #include "service/pubsub_service_multiton.hpp"
+#include "gateway/pubsub_gateway_multiton.hpp"
 #include <wfc/module/component_list.hpp>
 #include <wfc/name.hpp>
 
@@ -21,7 +22,8 @@ namespace
     public wfc::component_list<
       pubsub_module_name,
       pubsub_multiton,
-      pubsub_service_multiton
+      pubsub_service_multiton,
+      pubsub_gateway_multiton
     >
   {
     virtual std::string description() const override

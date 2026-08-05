@@ -6,8 +6,9 @@
 
 #include "pubsub_build_info.h"
 #include "pubsub_package.hpp"
+#include "http/http_module.hpp"
 #include "pubsub/pubsub_module.hpp"
-#include "comet_adapter/comet_adapter_module.hpp"
+#include "longpolling/longpolling_module.hpp"
 #include <wfc/module/module_list.hpp>
 
 namespace wfc{
@@ -16,8 +17,9 @@ namespace
 {
   class impl: public wfc::module_list<
     pubsub_build_info,
+    http_module,
     pubsub::pubsub_module,
-    comet_adapter::comet_adapter_module
+    pubsub::longpolling_module
   >
   {};
 }

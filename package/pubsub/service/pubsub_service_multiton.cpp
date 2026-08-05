@@ -18,7 +18,7 @@ namespace
   WFC_NAME2(service_name, "pubsub-service")
 
   class impl
-    : public ::wfc::jsonrpc::service_multiton< service_name, service_method_list, pubsub_interface>
+    : public ::wfc::jsonrpc::service_multiton< service_name, pubsub_service_method_list, subscriber_interface>
   {};
 }
 

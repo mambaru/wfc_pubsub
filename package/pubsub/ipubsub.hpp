@@ -5,6 +5,7 @@
 //
 #pragma once
 #include <wfc/iinterface.hpp>
+#include <pubsub/api/ping.hpp>
 #include <pubsub/api/publish.hpp>
 #include <pubsub/api/subscribe.hpp>
 #include <pubsub/api/describe.hpp>
@@ -12,15 +13,23 @@
 
 namespace wfc{ namespace pubsub{
 
+struct isubscriber: iinterface
+{
+  virtual ~isubscriber(){}
+  virtual void notify( request::publish::ptr req, response::publish::callback cb ) = 0;
+};
+
 struct ipubsub: iinterface
 {
   virtual ~ipubsub(){}
   virtual void publish( request::publish::ptr req, response::publish::callback cb ) = 0;
   virtual void subscribe( request::subscribe::ptr req, response::subscribe::callback cb,
-                          io_id_t io_id, std::weak_ptr<ipubsub> ) = 0;
+                          io_id_t io_id, std::weak_ptr<isubscriber> ) = 0;
   virtual void describe( request::describe::ptr req, response::describe::callback cb, io_id_t io_id) = 0;
+  virtual void ping( request::ping::ptr req, response::ping::callback cb, io_id_t io_id) = 0;
   virtual void get_messages( request::get_messages::ptr req, response::get_messages::callback cb ) = 0;
 };
+
 
 }}
 

@@ -8,11 +8,12 @@
 
 #include <pubsub/rocksdb/rocksdb_options.hpp>
 #include <pubsub/rocksdb/rocksdb_factory.hpp>
-#include <pubsub/api/message.hpp>
+#include <message_queue/message.hpp>
 #include <memory>
 #include <vector>
 #include <string>
 #include <ctime>
+#include <atomic>
 #include <mutex>
 #include <map>
 #include <set>
@@ -30,6 +31,9 @@ class multi_rocksdb
 public:
   typedef std::vector<message> message_list_t;
 
+  // После превышения кэш обнуляется и has() перестаёт давать отрицательные ответы
+  static constexpr size_t channels_cache_max = 1000000;
+
   virtual ~multi_rocksdb();
   multi_rocksdb();
   bool configure( bool channels_cache,  const rocksdb_options& opt);
@@ -41,12 +45,14 @@ private:
   rocksdb_ptr get_db_(time_t ttl) const;
   void close_db_(time_t ttl) ;
 private:
-  typedef std::mutex mutex_type;
+  typedef std::recursive_mutex mutex_type;
   mutable mutex_type _mutex;
   rocksdb_map _rocksdb_map;
   channel_set _channels;
   factory_ptr _factory;
   std::atomic_bool _channels_cache = false;
+  // false — после trim: неизвестные каналы нельзя считать отсутствующими
+  std::atomic_bool _channels_complete = true;
 
 private:
   typedef ::rocksdb::ColumnFamilyDescriptor CFD;
